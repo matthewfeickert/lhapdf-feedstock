@@ -12,6 +12,8 @@ source:
   sha256: 165143a5487d845d22e2d4dbe4ab4f51f09571756e80f71e3eacd7d412efb5d8
   patches:
     # Apply patch to wrappers/python/build.py.in to build bindings with Cython
+    # and to link them with the configured CXX (not the bare clang++ baked into
+    # sysconfig's LDCXXSHARED, which can't find the SDK headers as of clang 21)
     # https://gitlab.com/hepcedar/lhapdf/-/blob/c5b048f5794e483d85801d1ae39f42aaa46999dd/wrappers/python/build.py.in
     - if: osx
       then: osx_patch.diff
