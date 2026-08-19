@@ -1,8 +1,8 @@
 diff --git a/wrappers/python/build.py.in b/wrappers/python/build.py.in
-index d9d1624..a9ca50b 100755
+index d9d1624..7ee8ec8 100755
 --- a/wrappers/python/build.py.in
 +++ b/wrappers/python/build.py.in
-@@ -36,28 +36,14 @@ libargs = " ".join("-l{}".format(l) for l in libraries)
+@@ -36,26 +36,16 @@ libargs = " ".join("-l{}".format(l) for l in libraries)
  
  ## Python compile/link args
  pyargs = "-I" + sysconfig.get_config_var("INCLUDEPY")
@@ -26,11 +26,11 @@ index d9d1624..a9ca50b 100755
  
  ## Assemble the compile & link command
 -compile_cmd = "  ".join([os.environ.get("CXX", "g++"), "-shared -fPIC",
--                         "-o", srcname.replace(".cpp", ".so"),
--                         srcpath, incargs, cmpargs, linkargs, libargs, pyargs])
-+compile_cmd = "  ".join([sysconfig.get_config_var("LDCXXSHARED"), "-std=c++11",
-+                                                   "-o", srcname.replace(".cpp", ".so"),
-+                                                   srcpath, incargs, cmpargs, linkargs, libargs, pyargs])
++# Use the configured CXX rather than the bare compiler name baked into
++# sysconfig's LDCXXSHARED. As of clang v21, conda-forge's sysroot handling
++# lives in per-driver clang config files, so only the target-prefixed
++# driver in CXX can find the SDK and libc++ headers.
++compile_cmd = "  ".join([os.environ.get("CXX", "clang++"), "-bundle -undefined dynamic_lookup", "-std=c++11",
+                          "-o", srcname.replace(".cpp", ".so"),
+                          srcpath, incargs, cmpargs, linkargs, libargs, pyargs])
  print("Build command =", compile_cmd)
- 
- 

@@ -2,6 +2,18 @@
 
 set -ex
 
+# The v2+ versions of conda-forge compiler metapackages install minimally
+# activated compilers where the compiler toolchain works by explicit name
+# but environmental variables like CXX are no longer set.
+# c.f. https://github.com/conda-forge/conda-forge.github.io/issues/2595
+if [[ -z "${CXX:-}" ]]; then
+    if [[ "$(uname)" == "Darwin" ]]; then
+        CXX="clang++"
+    else
+        CXX="g++"
+    fi
+fi
+
 lhapdf-config --version
 
 echo -e "\n# Check lhapdf-config CLI API and flags return expected values"
