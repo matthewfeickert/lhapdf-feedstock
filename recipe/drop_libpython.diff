@@ -1,0 +1,30 @@
+diff --git a/wrappers/python/build.py.in b/wrappers/python/build.py.in
+index d9d1624..cc7ef6e 100755
+--- a/wrappers/python/build.py.in
++++ b/wrappers/python/build.py.in
+@@ -36,22 +36,11 @@ libargs = " ".join("-l{}".format(l) for l in libraries)
+ 
+ ## Python compile/link args
+ pyargs = "-I" + sysconfig.get_config_var("INCLUDEPY")
+-libpys = [os.path.join(sysconfig.get_config_var(ld), sysconfig.get_config_var("LDLIBRARY")) for ld in ["LIBPL", "LIBDIR"]]
+-libpys.extend( glob(os.path.join(sysconfig.get_config_var("LIBPL"), "libpython*.*")) )
+-libpys.extend( glob(os.path.join(sysconfig.get_config_var("LIBDIR"), "libpython*.*")) )
+-libpy = None
+-for lp in libpys:
+-    if os.path.exists(lp):
+-        libpy = lp
+-        break
+-if libpy is None:
+-    print("No libpython found in expected location exiting")
+-    print("Considered locations were:", libpys)
+-    sys.exit(1)
+-pyargs += " " + libpy
++# Do not link the extension module against libpython: the symbols are
++# provided by the interpreter that loads the module, and conda-forge's
++# python package no longer ships libpython as of Python 3.15.
+ pyargs += " " + sysconfig.get_config_var("LIBS")
+ pyargs += " " + sysconfig.get_config_var("LIBM")
+-#pyargs += " " + sysconfig.get_config_var("LINKFORSHARED")
+ 
+ 
+ ## Assemble the compile & link command
